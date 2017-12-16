@@ -4,7 +4,7 @@ from data import *
 
 class TestCompete(TestCase):
     def test1(self):
-        nice = Player(always_nice)
+        nice = Player(kantian)
         mean = Player(always_defect)
         compete(nice, mean, 5)
         assert(nice.score == 0 and mean.score == 15)
@@ -21,5 +21,4 @@ class TestCompete(TestCase):
         compete(mean, tf2t, 10)
         assert(mean.score == 14 and tf2t.score == 8)
 
-    def test4(self):
         

@@ -1,6 +1,6 @@
 from data import *
 
-p1 = Player(always_nice)
+p1 = Player(kantian)
 p2 = Player(always_defect)
 p3 = Player(tit_for_tat)
 p4 = Player(tit_for_2tats)

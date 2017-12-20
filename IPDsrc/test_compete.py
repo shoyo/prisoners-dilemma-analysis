@@ -1,25 +1,23 @@
 from unittest import TestCase
-from data import *
+from player import *
 
 
 class TestCompete(TestCase):
     def test1(self):
-        nice = Player(always_nice)
-        mean = Player(always_defect)
+        nice = Kantian()
+        mean = AlwaysDefect()
         compete(nice, mean, 5)
         assert(nice.score == 0 and mean.score == 15)
 
     def test2(self):
-        mean = Player(always_defect)
-        tft = Player(tit_for_tat)
+        mean = AlwaysDefect()
+        tft = TitForTat()
         compete(tft, mean, 10)
         assert(mean.score == 12 and tft.score == 9)
 
     def test3(self):
-        mean = Player(always_defect)
-        tf2t = Player(tit_for_2tats)
+        mean = AlwaysDefect()
+        tf2t = TitFor2Tats()
         compete(mean, tf2t, 10)
         assert(mean.score == 14 and tf2t.score == 8)
 
-    def test4(self):
-        

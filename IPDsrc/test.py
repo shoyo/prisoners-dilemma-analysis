@@ -18,7 +18,13 @@ class Population(object):
 
     def excluding(self, excluded_member):
         copy = self.members[:]
-        return [member for member in copy if member is not excluded_member]
+        return Population([member for member in copy if member is not excluded_member])
+
+    def is_empty(self):
+        return self.members == []
+
+    def __iter__(self):
+        return iter(self.members)
 
 
 class Number(object):
@@ -44,12 +50,17 @@ def round_robin(population):
     >>> print([member.value for member in population.get_members()])
     [15, 15, 15, 15, 15]
     """
-    return None
+    if not population.is_empty():
+        other_members = population.excluding(population.first_member())
+        for member in other_members:
+            interact(population.first_member(), member)
+        round_robin(other_members)
+
 
 
 def interact(p1, p2):
-    sum = p1.value + p2.value
-    p1.value, p2.value = sum, sum
+    p1.value += 1
+    p2.value += 1
 
 
 #############
@@ -70,6 +81,9 @@ print("Members not including first:")
 other_members = population.excluding(population.first_member())
 print(other_members)
 
+print("Testing round robin:")
+round_robin(population)
+print(population)
 
 
 

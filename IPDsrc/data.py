@@ -1,9 +1,10 @@
+# PLAYER, STRATEGY, TOURNAMENT EXECUTION DATA
 from random import randint
 
-################
-# Player Types #
-################
 
+#####################
+# Main Player class #
+#####################
 
 class Player(object):
     def __init__(self, score=0):
@@ -12,11 +13,13 @@ class Player(object):
         self.this_action = None
         self.opponent = None
 
-    def new_match(self, opponent, score=0):
-        self.score = score
+    def new_match_against(self, opponent):
         self.last_action = None
         self.opponent = opponent
         self.this_action = None
+
+    def reset_score(self, score=0):
+        self.score = score
 
     def action(self):
         self.this_action = self.decide_action()
@@ -32,6 +35,10 @@ class Player(object):
     def add_points(self, points):
         self.score += points
 
+
+###########################################
+# Strategies (Inherits from Player class) #
+###########################################
 
 class Kantian(Player):
     """
@@ -63,9 +70,9 @@ class TitForTat(Player):
         self.first_move = False
         return True
 
-    def new_match(self, opponent, score=0):
+    def new_match_against(self, opponent):
         self.first_move = True
-        super().new_match(opponent, score)
+        super().new_match_against(opponent)
 
 
 class TitFor2Tats(Player):
@@ -81,9 +88,9 @@ class TitFor2Tats(Player):
             self.opponent_last_actions = (self.opponent_last_actions[1], self.opponent.last_action)
         return self.opponent_last_actions[0] or self.opponent_last_actions[1]
 
-    def new_match(self, opponent, score=0):
+    def new_match_against(self, opponent):
         self.opponent_last_actions = (True, True)
-        super().new_match(opponent, score)
+        super().new_match_against(opponent)
 
 
 class MeanTitForTat(TitForTat):
@@ -124,10 +131,10 @@ class Conniving(TitForTat):
     def decide_action(self):
         return super().decide_action()
 
-    def new_match(self, opponent, score=0):
+    def new_match_against(self, opponent):
         self.has_tested = False
         self.opponent_retaliated = False
-        return super().decide_action()
+        return super().new_match_against(opponent)
 
 
 class Grudger(Player):
@@ -141,9 +148,9 @@ class Grudger(Player):
             self.opponent_never_defected = False
         return self.opponent_never_defected
 
-    def new_match(self, opponent, score=0):
+    def new_match_against(self, opponent):
         self.opponent_never_defected = True
-        super().new_match(opponent, score)
+        super().new_match_against(opponent)
 
 
 class Pavlov(Player):
@@ -151,6 +158,7 @@ class Pavlov(Player):
     Otherwise, does opposite action."""
 
     last_score = 0
+    last_action = False
 
     def decide_action(self):
         gained = self.score > self.last_score
@@ -160,9 +168,10 @@ class Pavlov(Player):
         else:
             return not self.last_action
 
-    def new_match(self, opponent, score=0):
+    def new_match_against(self, opponent):
         self.last_score = 0
-        super().new_match(opponent, score)
+        self.last_action = False
+        super().new_match_against(opponent)
 
 
 class ClanGrunt(Player):
@@ -180,6 +189,53 @@ class Random(Player):
 
     def decide_action(self):
         return randint(0, 1)
+
+
+####################
+# Population Class #
+####################
+
+class Population(object):
+    """An object that represents a group of players.
+    Manages players in a list."""
+
+    def __init__(self, members):
+        self.members = members
+
+    def __repr__(self):
+        return "{}".format(self.members)
+
+    def __iter__(self):
+        return iter(self.members)
+
+    def get_members(self):
+        return self.members
+
+    def first_member(self):
+        if not self.members:
+            raise Exception("There are no players in this population.")
+        else:
+            return self.members[0]
+
+    def excluding(self, excluded_member):
+        copy = self.members[:]
+        return Population([member for member in copy if member is not excluded_member])
+
+    def is_empty(self):
+        return not self.members
+
+    def scoreboard(self):
+        return [member.score for member in self.members]
+
+
+#########################
+# Tournament Executions #
+#########################
+""" Prisoner's Dilemma Payoffs:
+    Both cooperate              -> both +2 pts
+    Both defect                 -> both +1 pts
+    One cooperates, one defects -> cooperator +0 pts, defector +3 pts
+"""
 
 
 def play_round(p1, p2):
@@ -200,11 +256,18 @@ def play_round(p1, p2):
     p2.update_last_action()
 
 
-def compete(p1, p2, n):
-    p1.new_match(p2)
-    p2.new_match(p1)
-    for i in range(0, n):
+def play_several_rounds(p1, p2, num_rounds):
+    p1.new_match_against(p2)
+    p2.new_match_against(p1)
+    for i in range(0, num_rounds):
         play_round(p1, p2)
 
 
-def round_robin(population):
+def round_robin(population, num_rounds):
+    """Competes every member of the population with every other member
+    of the population for num_rounds each."""
+    if not population.is_empty():
+        other_members = population.excluding(population.first_member())
+        for member in other_members:
+            play_several_rounds(population.first_member(), member, num_rounds)
+        round_robin(other_members, num_rounds)

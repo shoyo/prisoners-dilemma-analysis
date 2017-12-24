@@ -1,12 +1,16 @@
+# INITIAL GENERATION PROFILE
 from data import *
 
-p1 = Player(kantian)
-p2 = Player(always_defect)
-p3 = Player(tit_for_tat)
-p4 = Player(tit_for_2tats)
-p5 = Player(tester)
-p6 = Player(grudger)
-p7 = Player(random)
+p1 = Kantian()
+p2 = AlwaysDefect()
+p3 = TitForTat()
+p4 = TitFor2Tats()
+p5 = Grudger()
+p6 = Random()
 
-initial_population = [p1, p2, p3, p4, p5, p6, p7]
-current_generation = Population(initial_population)
+profile1 = [p1, p2, p3, p4, p5, p6]
+diverse = Population(profile1)
+
+# diverse, all Kantian (perfect world), all defectors (cruel world)
+# a few defectors in a perfect world, 1 tft in cruel world,
+# a few tfts in a cruel world

@@ -1,5 +1,6 @@
 from unittest import TestCase
-from data import *
+from stratdata import *
+from gendata import *
 NUM_ROUNDS = 10
 
 
@@ -14,9 +15,9 @@ class TestCompetition(TestCase):
         assert test.scoreboard() == [40, 40, 40]
 
     def test2(self):
-        p1 = AlwaysDefect()
-        p2 = AlwaysDefect()
-        p3 = AlwaysDefect()
+        p1 = Defector()
+        p2 = Defector()
+        p3 = Defector()
         test = Population([p1, p2, p3])
         round_robin(test, NUM_ROUNDS)
         print("Got: " + str(test.scoreboard()))
@@ -24,7 +25,7 @@ class TestCompetition(TestCase):
 
     def test3(self):
         p1 = Kantian()
-        p2 = AlwaysDefect()
+        p2 = Defector()
         p3 = TitForTat()
         test = Population([p1, p2, p3])
         round_robin(test, NUM_ROUNDS)
@@ -34,7 +35,7 @@ class TestCompetition(TestCase):
     def test4(self):
         p1 = TitForTat()
         p2 = TitForTat()
-        p3 = AlwaysDefect()
+        p3 = Defector()
         test = Population([p1, p2, p3])
         round_robin(test, NUM_ROUNDS)
         print("Got: " + str(test.scoreboard()))
@@ -42,8 +43,8 @@ class TestCompetition(TestCase):
 
     def test5(self):
         p1 = TitFor2Tats()
-        p2 = AlwaysDefect()
-        p3 = Pavlov()
+        p2 = Defector()
+        p3 = Pavlovian()
         test = Population([p1, p2, p3])
         round_robin(test, NUM_ROUNDS)
         print("Got: " + str(test.scoreboard()))

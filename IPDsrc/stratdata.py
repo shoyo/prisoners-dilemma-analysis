@@ -1,8 +1,9 @@
 # PLAYER, STRATEGY DATA
 from random import randint
 
+
 #####################
-# Main Player class #
+# Base Player class #
 #####################
 
 class Player(object):
@@ -118,11 +119,10 @@ class MeanTitForTat(TitForTat):
         self.name = "Mean Tit for Tat"
 
     def decide_action(self):
-        action = super().decide_action()
-        if randint(0, 50) == 0:
+        if not randint(0, 50):
             return False
         else:
-            return action
+            return super().decide_action()
 
 
 class WaryTitForTat(TitForTat):

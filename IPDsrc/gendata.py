@@ -28,6 +28,13 @@ class Population(object):
     def append(self, item):
         self.members.append(item)
 
+    def scoreboard(self):
+        return [str(member.name) + ": " + str(member.score) for member in self.members]
+
+    def reset_all_scores(self):
+        for member in self.members:
+            member.reset_score()
+
     def first_member(self):
         if not self.members:
             raise Exception("There are no players in this population.")
@@ -38,10 +45,6 @@ class Population(object):
         copy = self.members[:]
         return Population([member for member in copy if member is not excluded_member])
 
-    def top_half(self):
-        """ Returns top half of given population. """
-        return Population(self[0: len(self) // 2])
-
     def is_empty(self):
         return not self.members
 
@@ -49,8 +52,9 @@ class Population(object):
         """ Sorts members from highest to lowest with regards to score."""
         return Population(sorted(self, key=lambda member: member.score, reverse=True))
 
-    def scoreboard(self):
-        return [member.score for member in self.members]
+    def top_half(self):
+        """ Returns top half of given population. """
+        return Population(self[0: len(self) // 2])
 
     def create_next_gen(self):
         """

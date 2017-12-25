@@ -18,16 +18,39 @@ def diverse():
 
 
 def cruel_world_with_a_tft():
-    return None
+    profile = []
+    for i in range(99):
+        profile.append(Defector())
+    profile.append(TitForTat())
+
+    return Population(profile)
 
 
-def cruel_world_with_some_tft():
-    return None
+def cruel_world_with_few_tft():
+    profile = []
+    for i in range(97):
+        profile.append(Defector())
+    for i in range(3):
+        profile.append(TitForTat())
+
+    return Population(profile)
 
 
 def kantian_with_few_defectors():
-    return None
+    profile = []
+    for i in range(97):
+        profile.append(Kantian())
+    for i in range(3):
+        profile.append(Defector())
+
+    return Population(profile)
 
 
-def defectors_with_few_kantians():
-    return None
+def defectors_with_some_kantians():
+    profile = []
+    for i in range(70):
+        profile.append(Defector())
+    for i in range(30):
+        profile.append(Kantian())
+
+    return Population(profile)

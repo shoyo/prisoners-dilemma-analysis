@@ -28,6 +28,25 @@ class Population(object):
     def append(self, item):
         self.members.append(item)
 
+    def distribution(self):
+        distribution = {}
+        total_num_players = 0
+
+        # recording num of occurrences for each player's strategy type
+        for member in self.members:
+            if member.name in distribution:
+                distribution[member.name] += 1
+            else:
+                distribution[member.name] = 1
+            total_num_players += 1
+
+        # converting num of occurrences to a percentage value
+        for key in distribution.keys():
+            prop = distribution[key] / total_num_players * 100
+            distribution[key] = str("%.2f" % prop) + "%"
+
+        return distribution
+
     def scoreboard(self):
         return [str(member.name) + ": " + str(member.score) for member in self.members]
 

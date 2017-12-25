@@ -2,21 +2,19 @@
 from profiles import *
 import csv
 
-NUM_OF_GENS = 10
-NUM_OF_ROUNDS = 200
+NUM_GENS = 5
+NUM_ROUNDS = 100
 current_gen = diverse()
 
-for i in range(NUM_OF_GENS):
+for i in range(NUM_GENS):
     print("Generation " + str(i + 1) + ":")
 
-    print("Pre:")
+    round_robin(current_gen, NUM_ROUNDS)
+    print("Distribution:")
+    print(current_gen.distribution())
+    print("Final Scores:")
     print(current_gen.scoreboard())
-
-    round_robin(current_gen, NUM_OF_ROUNDS)
-
-    print("Post:")
-    print(current_gen.scoreboard())
-    print("")
+    print()
 
     current_gen = current_gen.create_next_gen()
     current_gen.reset_all_scores()

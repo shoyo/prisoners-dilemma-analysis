@@ -12,6 +12,7 @@ def diverse():
     profile.append(TitForTat())
     profile.append(TitFor2Tats())
     profile.append(MeanTitForTat())
+    profile.append(WaryTitForTat())
     profile.append(Random())
 
     return Population(profile)
@@ -28,9 +29,9 @@ def cruel_world_with_a_tft():
 
 def cruel_world_with_few_tft():
     profile = []
-    for i in range(97):
+    for i in range(80):
         profile.append(Defector())
-    for i in range(3):
+    for i in range(20):
         profile.append(TitForTat())
 
     return Population(profile)

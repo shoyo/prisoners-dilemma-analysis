@@ -2,9 +2,9 @@
 from profiles import *
 import csv
 
-NUM_GENS = 5
+NUM_GENS = 35
 NUM_ROUNDS = 100
-current_gen = diverse()
+current_gen = cruel_world_with_few_tft()
 
 for i in range(NUM_GENS):
     print("Generation " + str(i + 1) + ":")

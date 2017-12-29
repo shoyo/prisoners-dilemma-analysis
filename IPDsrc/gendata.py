@@ -1,4 +1,5 @@
 # POPULATION/GENERATION CLASS, TOURNAMENT EXECUTIONS
+from random import randint
 from copy import deepcopy
 
 
@@ -12,6 +13,8 @@ class Population(object):
 
     def __init__(self, members):
         self.members = members
+
+    # Methods to manipulate Population class as lists:
 
     def __repr__(self):
         return "{}".format(self.members)
@@ -28,31 +31,19 @@ class Population(object):
     def append(self, item):
         self.members.append(item)
 
-    def distribution(self):
-        distribution = {}
-        total_num_players = 0
-
-        # recording num of occurrences for each player's strategy type
-        for member in self.members:
-            if member.name in distribution:
-                distribution[member.name] += 1
-            else:
-                distribution[member.name] = 1
-            total_num_players += 1
-
-        # converting num of occurrences to a percentage value
-        for key in distribution.keys():
-            prop = distribution[key] / total_num_players * 100
-            distribution[key] = str("%.2f" % prop) + "%"
-
-        return distribution
+    # Methods for score manipulation:
 
     def scoreboard(self):
         return [str(member.name) + ": " + str(member.score) for member in self.members]
 
+    def scores(self):
+        return [member.score for member in self.members]
+
     def reset_all_scores(self):
         for member in self.members:
             member.reset_score()
+
+    # Methods for 'round_robin' function:
 
     def first_member(self):
         if not self.members:
@@ -67,35 +58,62 @@ class Population(object):
     def is_empty(self):
         return not self.members
 
-    def sort(self):
-        """ Sorts members from highest to lowest with regards to score."""
-        return Population(sorted(self, key=lambda member: member.score, reverse=True))
+    # Methods for generation logic:
 
-    def top_half(self):
-        """ Returns top half of given population. """
-        return Population(self[0: len(self) // 2])
+    def total_score(self):
+        """ Returns the sum of all scores in the population. """
+        total = 0
+        for member in self.members:
+            total += member.score
+        return total
 
     def create_next_gen(self):
         """
-        Returns the next generation based on the successful members of
-        current population. More specifically, the top 50% of the population
-        (with respect to score) "breed", and 2 copies of each are appended
-        to the next generation.
+        Returns the next generation based on the current population.
+        Each member of the next generation is determined by chance proportionate to
+        each member of the current population's relative final score.
+
+        For example:
+        Population is comprised of Player 1 and Player 2.
+        Player 1 has a final score of 10. Player 2 has a final score of 20.
+        Each new member of the new generation has a 33% chance (1/3) chance of being an
+        offspring of Player 1, and a 67% chance (2/3) of being an offspring of Player 2.
         """
         next_gen = Population([])
-        sorted_population = self.sort()
-        population_size = len(self)
 
-        for member in sorted_population.top_half():
-            next_gen.append(deepcopy(member))
-            next_gen.append(deepcopy(member))
-
-        # if population size is odd, the member at the 50% mark is
-        # appended only once, to maintain population size
-        if population_size % 2 != 0:
-            next_gen.append(sorted_population[population_size // 2])
+        total_score = self.total_score()
+        for i in range(len(self.members)):
+            rand = randint(1, total_score)
+            curr = 0
+            for member in self.members:
+                curr += member.score
+                if rand <= curr:
+                    next_gen.append(deepcopy(member))
+                    break
 
         return next_gen
+
+    # Methods for checking population data
+
+    def distribution(self):
+        distribution = {}
+        total_num_players = 0
+
+        for member in self.members:
+            if member.name in distribution:
+                distribution[member.name] += 1
+            else:
+                distribution[member.name] = 1
+            total_num_players += 1
+
+        for key in distribution.keys():
+            prop = distribution[key] / total_num_players * 100
+            distribution[key] = str("%.2f" % prop) + "%"
+
+        return distribution
+
+    def check_for_convergence(self):
+        return None
 
 
 #########################

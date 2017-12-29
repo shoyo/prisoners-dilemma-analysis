@@ -13,7 +13,6 @@ class Player(object):
         self.last_action = None
         self.this_action = None
         self.opponent = None
-        self.successful = False
 
     def new_match_against(self, opponent):
         self.last_action = None
@@ -71,20 +70,19 @@ class TitForTat(Player):
     """Starts by cooperating. After that, always cooperates unless
     opponent's last move was defect."""
 
-    first_move = True
-
     def __init__(self):
         super().__init__()
         self.name = "Tit for Tat"
+        self.is_first_move = True
 
     def decide_action(self):
-        if not self.first_move:
+        if not self.is_first_move:
             return self.opponent.last_action
-        self.first_move = False
+        self.is_first_move = False
         return True
 
     def new_match_against(self, opponent):
-        self.first_move = True
+        self.is_first_move = True
         super().new_match_against(opponent)
 
 
@@ -92,11 +90,10 @@ class TitFor2Tats(Player):
     """Starts by cooperating. After that, always cooperates unless
     opponent's last two moves were defect."""
 
-    opponent_last_actions = (True, True)
-
     def __init__(self):
         super().__init__()
         self.name = "Tit for 2 Tats"
+        self.opponent_last_actions = (True, True)
 
     def decide_action(self):
         if self.opponent.last_action is None:
@@ -128,14 +125,16 @@ class MeanTitForTat(TitForTat):
 class WaryTitForTat(TitForTat):
     """Starts by defecting. After that, same as Tit for Tat."""
 
-    first_move = False
-
     def __init__(self):
         super().__init__()
         self.name = "Wary Tit for Tat"
 
     def decide_action(self):
-        return super().decide_action()
+        if self.is_first_move:
+            self.is_first_move = False
+            return False
+        else:
+            return super().decide_action()
 
 
 class Tester(TitForTat):
@@ -153,12 +152,11 @@ class Conniver(TitForTat):
     and following up with two turns of cooperation. If opponent does not defect back within
     2 turns of it defecting, it continues defecting."""
 
-    has_tested = False
-    opponent_retaliated = False
-
     def __init__(self):
         super().__init__()
         self.name = "Conniver"
+        self.has_tested = False
+        self.opponent_retaliated = False
 
     def decide_action(self):
         return super().decide_action()
@@ -173,11 +171,10 @@ class Grudger(Player):
     """Starts by cooperating. After that, always cooperate until opponent defects.
     After that, always defects."""
 
-    opponent_never_defected = True
-
     def __init__(self):
         super().__init__()
         self.name = "Grudger"
+        self.opponent_never_defected = True
 
     def decide_action(self):
         if not self.opponent.last_action:
@@ -193,24 +190,22 @@ class Pavlovian(Player):
     """Starts by cooperating. If points were gained in the last turn, repeats action.
     Otherwise, does opposite action."""
 
-    last_score = 0
-    last_action = False
-
     def __init__(self):
         super().__init__()
         self.name = "Pavlovian"
+        self.gained_last_turn = True
+        self.last_score = -1  # negative so first move is cooperate
 
     def decide_action(self):
-        gained = self.score > self.last_score
+        self.gained_last_turn = self.score > self.last_score
         self.last_score = self.score
-        if gained:
+        if self.gained_last_turn:
             return self.last_action
         else:
             return not self.last_action
 
     def new_match_against(self, opponent):
-        self.last_score = 0
-        self.last_action = False
+        self.last_action = True
         super().new_match_against(opponent)
 
 

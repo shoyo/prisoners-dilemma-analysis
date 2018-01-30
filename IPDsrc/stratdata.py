@@ -1,7 +1,6 @@
 # PLAYER, STRATEGY DATA
 from random import randint
 
-
 #####################
 # Base Player class #
 #####################
@@ -47,7 +46,7 @@ class Kantian(Player):
     will that it should become a universal law.'
     Always cooperates.
     """
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Kantian"
 
@@ -58,7 +57,7 @@ class Kantian(Player):
 class Defector(Player):
     """Always defects."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Defector"
 
@@ -70,7 +69,7 @@ class TitForTat(Player):
     """Starts by cooperating. After that, always cooperates unless
     opponent's last move was defect."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Tit for Tat"
         self.is_first_move = True
@@ -90,7 +89,7 @@ class TitFor2Tats(Player):
     """Starts by cooperating. After that, always cooperates unless
     opponent's last two moves were defect."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Tit for 2 Tats"
         self.opponent_last_actions = (True, True)
@@ -111,12 +110,12 @@ class MeanTitForTat(TitForTat):
     """Identical to Tit for Tat. However, occasionally tries to take advantage of opponent
     by defecting."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Mean Tit for Tat"
 
     def decide_action(self):
-        if not randint(0, 50):
+        if not randint(0, 25):
             return False
         else:
             return super().decide_action()
@@ -125,7 +124,7 @@ class MeanTitForTat(TitForTat):
 class WaryTitForTat(TitForTat):
     """Starts by defecting. After that, same as Tit for Tat."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Wary Tit for Tat"
 
@@ -142,7 +141,7 @@ class Tester(TitForTat):
     and following up with a turn of cooperation. If the opponent does not retaliate, continues
     alternating between defecting and cooperating."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Tester"
 
@@ -152,17 +151,30 @@ class Conniver(TitForTat):
     and following up with two turns of cooperation. If opponent does not defect back within
     2 turns of it defecting, it continues defecting."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Conniver"
-        self.has_tested = False
+        self.testing_turn = 0
         self.opponent_retaliated = False
 
     def decide_action(self):
-        return super().decide_action()
+        if self.testing_turn == 0 and not randint(0, 25):  # testing
+            self.testing_turn += 1
+            return False
+        elif 0 < self.testing_turn <= 2:  # 2 turns of apology
+            self.testing_turn += 1
+            if not self.opponent.last_action:
+                self.opponent_retaliated = True
+            return True
+        elif self.testing_turn > 2 and self.opponent_retaliated:
+            return True
+        elif self.testing_turn > 2 and not self.opponent_retaliated:
+            return False
+        else:
+            return super().decide_action()
 
     def new_match_against(self, opponent):
-        self.has_tested = False
+        self.testing_turn = 0
         self.opponent_retaliated = False
         return super().new_match_against(opponent)
 
@@ -171,7 +183,7 @@ class Grudger(Player):
     """Starts by cooperating. After that, always cooperate until opponent defects.
     After that, always defects."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Grudger"
         self.opponent_never_defected = True
@@ -190,7 +202,7 @@ class Pavlovian(Player):
     """Starts by cooperating. If points were gained in the last turn, repeats action.
     Otherwise, does opposite action."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Pavlovian"
         self.gained_last_turn = True
@@ -213,7 +225,7 @@ class ClanGrunt(Player):
     """Always starts with sequence: DCCCD. If opponent starts with same sequence, cooperates
     for the rest of the game to maximize Clan Leader's gains. Otherwise plays Tit for Tat."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Clan Grunt"
 
@@ -222,7 +234,7 @@ class ClanLeader(Player):
     """Always starts with sequence: DCCCD. If opponent starts with same sequence, defects
     for the rest of the game to maximize its own gains. Otherwise plays Tit for Tat."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Clan Leader"
 
@@ -230,7 +242,7 @@ class ClanLeader(Player):
 class Random(Player):
     """Cooperates or defects at a 50/50 chance."""
 
-    def __init__(self):
+    def __init__(self, score=0):
         super().__init__()
         self.name = "Random"
 

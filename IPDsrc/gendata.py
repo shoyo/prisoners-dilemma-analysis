@@ -106,14 +106,14 @@ class Population(object):
                 distribution[member.name] = 1
             total_num_players += 1
 
-        for key in distribution.keys():
-            prop = distribution[key] / total_num_players * 100
-            distribution[key] = str("%.2f" % prop) + "%"
+        for member in distribution.keys():
+            prop = distribution[member] / total_num_players * 100
+            distribution[member] = prop
 
         return distribution
 
-    def check_for_convergence(self):
-        return None
+    def unique_strats(self):
+        return [member for member in self.distribution().keys()]
 
 
 #########################

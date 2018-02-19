@@ -154,7 +154,8 @@ def play_several_rounds(p1, p2, num_rounds):
 
 def round_robin(population, num_rounds):
     """Competes every member of the population with every other member
-    of the population for num_rounds each."""
+    of the population for num_rounds each.
+    """
     if not population.is_empty():
         other_members = population.excluding(population.first_member())
         for member in other_members:

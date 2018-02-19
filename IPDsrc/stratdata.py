@@ -2,9 +2,7 @@
 from random import randint
 
 
-#####################
-# Base Player class #
-#####################
+# ----- Player class (base class for all strategies) ---- #
 
 class Player(object):
     def __init__(self, score=0):
@@ -37,9 +35,7 @@ class Player(object):
         self.score += points
 
 
-#####################################
-# Strategies (inherits from Player) #
-#####################################
+# ----- Strategies (inherits from Player) ----- #
 
 class Kantian(Player):
     """

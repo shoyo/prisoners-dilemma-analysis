@@ -5,7 +5,13 @@ import matplotlib.pyplot as plt
 
 NUM_GENS = 35
 NUM_ROUNDS = 100
-INITIAL_PROFILE = defectors_with_some_tft()
+INITIAL_PROFILE = tft_test1()
+
+
+def run_simulation(initial_gen, num_gens, num_rounds):
+    """ Takes Population object made by 'function' in profiles.py and returns
+    values for each strategy.
+    """
 
 
 def exec_print(initial_gen, num_gens, num_rounds):
@@ -59,6 +65,3 @@ def exec_plot(initial_gen, num_gens, num_rounds):
     plt.ylabel('Population Distribution [%]')
     plt.legend()
     plt.show()
-
-
-exec_plot(INITIAL_PROFILE, NUM_GENS, NUM_ROUNDS)

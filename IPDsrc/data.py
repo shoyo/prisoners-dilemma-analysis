@@ -301,16 +301,13 @@ class Population(object):
         return total
 
     def create_next_gen(self):
-        """ Returns the next generation based on the current population.
-
-        Example --
+        """ Example --
         Population is comprised of Player 1 and Player 2.
         Player 1 has a final score of 10. Player 2 has a final score of 20.
         Each new member of the new generation has a 33% chance (1/3) chance of being an
         offspring of Player 1, and a 67% chance (2/3) of being an offspring of Player 2.
         """
         next_gen = Population([])
-
         total_score = self.total_score()
         for i in range(len(self.members)):
             rand = randint(1, total_score)
@@ -320,28 +317,22 @@ class Population(object):
                 if rand <= curr:
                     next_gen.append(deepcopy(member))
                     break
-
+        next_gen.reset_all_scores()
         return next_gen
 
     def distribution(self):
-        distribution = {}
+        dist = {}
         total_num_players = 0
-
         for member in self.members:
-            if member.name in distribution:
-                distribution[member.name] += 1
+            if member.name in dist:
+                dist[member.name] += 1
             else:
-                distribution[member.name] = 1
+                dist[member.name] = 1
             total_num_players += 1
-
-        for member in distribution.keys():
-            prop = distribution[member] / total_num_players * 100
-            distribution[member] = prop
-
-        return distribution
-
-    def unique_strats(self):
-        return [member for member in self.distribution().keys()]
+        for member in dist:
+            prop = dist[member] / total_num_players * 100
+            dist[member] = '%.2f' % prop
+        return dist
 
 
 def play_round(p1, p2):

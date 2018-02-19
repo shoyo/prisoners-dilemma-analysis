@@ -1,4 +1,3 @@
-import main
 from tkinter import *
 from tkinter import messagebox
 import matplotlib
@@ -6,6 +5,8 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
     NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+from main import run_simulation
 
 
 class SimulationGUI(Frame):
@@ -14,14 +15,18 @@ class SimulationGUI(Frame):
         self.pack(fill=BOTH)
         self.config(bg=bg['test'])
 
-        self.setting_frame = Frame(self).pack(expand=True, fill=BOTH, side=LEFT)
-        self.preset_frame = Frame(self).pack(expand=True, fill=BOTH)
-        self.graph_frame = Frame(self).pack(expand=True, fill=BOTH, side=RIGHT)
+        self.setting_frame = Frame(self)
+        self.preset_frame = Frame(self)
+        self.graph_frame = Frame(self)
+
+        self.setting_frame.grid(row=0, column=0)
+        self.preset_frame.grid(row=1, column=0)
+        self.graph_frame.grid(row=0, column=1)
 
         self.curr_row = 0
 
         self.init_strats()
-        self.init_parameters()
+        self.init_params()
         self.init_presets()
         self.init_graph()
 
@@ -32,19 +37,16 @@ class SimulationGUI(Frame):
             'Tit for 2 Tats': IntVar(),
             'Grudger': IntVar(),
         }
-
         self.self_strats = {
             'Defector': IntVar(),
             'Mean Tit for Tat': IntVar(),
             'Conniver': IntVar(),
             'Tester': IntVar()
         }
-
         self.neut_strats = {
             'Wary Tit for Tat': IntVar(),
             'Random': IntVar(),
         }
-
         self.all_strats = {
             'Cooperative strategies': self.coop_strats,
             'Selfish strategies': self.self_strats,
@@ -59,7 +61,6 @@ class SimulationGUI(Frame):
             Label(self.setting_frame, text=strategy_type, font=fonts['sub_header'],
                   padx=15, width=20, anchor=W).grid(row=self.curr_row)
             self.curr_row += 1
-
             for strategy in self.all_strats[strategy_type]:
                 Label(self.setting_frame, text=strategy + ' -', font=fonts['text'],
                       width=15, anchor=E).\
@@ -69,22 +70,24 @@ class SimulationGUI(Frame):
                     grid(row=self.curr_row, column=1)
                 self.curr_row += 1
 
-    def init_parameters(self):
-        self.parameters = {
+    def init_params(self):
+        self.param = {
             'Rounds': IntVar(),
             'Generations': IntVar()
         }
+        self.param['Rounds'].set(10)
+        self.param['Generations'].set(35)
 
         Label(self.setting_frame, text="Simulation settings",
               font=fonts['sub_header'], height=2, width=20, anchor=SW).\
             grid(row=self.curr_row, column=0)
         self.curr_row += 1
 
-        for param in self.parameters:
+        for param in self.param:
             Label(self.setting_frame, text=param + " -", width=12,
                   anchor=E).grid(row=self.curr_row, column=0)
             Entry(self.setting_frame, width=entry_width, justify='right',
-                  textvariable=self.parameters[param]).\
+                  textvariable=self.param[param]).\
                 grid(row=self.curr_row, column=1)
             self.curr_row += 1
 
@@ -92,10 +95,9 @@ class SimulationGUI(Frame):
                                    font=fonts['sub_button'], height=2,
                                    command=self.reset_strat_values)
         self.reset_button.grid(row=0, column=1)
-
         self.execute_button = Button(self.setting_frame, text='Execute',
                                      font=fonts['main_button'], height=2,
-                                     command=self.execute_warning)
+                                     command=self.confirmation)
         self.execute_button.grid(row=self.curr_row, column=1)
         self.curr_row += 1
 
@@ -134,11 +136,10 @@ class SimulationGUI(Frame):
             self.curr_row += 1
 
     def init_graph(self):
-        sample_fig = Figure(figsize=(5, 5), dpi=100)
-        a = sample_fig.add_subplot(111)
+        self.sample_fig = Figure(figsize=(5, 5), dpi=100)
+        a = self.sample_fig.add_subplot(111)
         a.plot()
-
-        canvas = FigureCanvasTkAgg(sample_fig, self.graph_frame)
+        canvas = FigureCanvasTkAgg(self.sample_fig, self)
         canvas.show()
         canvas.get_tk_widget().grid(row=0, column=1)
 
@@ -147,34 +148,48 @@ class SimulationGUI(Frame):
             for strat in self.all_strats[strat_list].keys():
                 self.all_strats[strat_list][strat].set(0)
 
-    def execute_warning(self):
-        response = messagebox.askquestion("Confirmation",
-                                          "Are you sure you would like to "
-                                          "execute this simulation?")
-        if response == 'yes':
-            self.compile_profile()
-            pass
-
     def compile_profile(self):
         profile = {}
         for strategy_type in self.all_strats:
             for strategy in self.all_strats[strategy_type]:
-                profile[strategy] = self.all_strats[strategy_type][strategy].get()
-        return profile
+                try:
+                    var = self.all_strats[strategy_type][strategy].get()
+                except TclError:
+                    if var == "":
+                        self.all_strats[strategy_type][strategy].set(0)
+                    messagebox.showerror("Warning", "Inputted values were invalid. Graph may be wrong")
+                if var == 0:
+                    continue
+                profile[strategy] = var
+        return profileerror
+
+    def confirmation(self):
+        response = messagebox.askquestion("Confirmation",
+                                          "Are you sure you would like to "
+                                          "execute this simulation?")
+        if response == 'yes':
+            self.execute_plot()
+
+    def execute_plot(self):
+        canvas = FigureCanvasTkAgg(self.sample_fig, self)
+        result = run_simulation(
+            self.compile_profile(), self.param['Generations'].get(), self.param['Rounds'].get())
+        x_axis = result.pop('gens')
+        a = self.sample_fig.add_subplot(111)
+        for strat in result:
+            a.plot(x_axis, result[strat], label=strat)
+        canvas.show()
+        canvas.get_tk_widget().grid(row=0, column=1)
 
     def select_preset(self, preset):
-        pass
-
-    def execute_plot(self, profile):
-        print("creating matplotlib plot")
         pass
 
 
 def run_gui():
     root = Tk()
     root.title("IPD Simulation")
-    root.minsize(1400, 800)
-    root.geometry("1400x800")
+    root.minsize(950, 700)
+    root.geometry("950x700")
 
     ipd = SimulationGUI(root)
     root.mainloop()

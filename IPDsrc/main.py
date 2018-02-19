@@ -4,20 +4,76 @@ import matplotlib.pyplot as plt
 
 NUM_GENS = 35
 NUM_ROUNDS = 100
-INITIAL_PROFILE = tft_test1()
+INITIAL_PROFILE = defectors_with_some_tft()
 
 
-def run_simulation(initial_gen, num_gens, num_rounds):
-    pass
+def run_simulation(init_profile: dict, num_gens, num_rounds):
+    dist = {
+        'gens': np.linspace(1, num_gens, num_gens)
+    }
+    init_gen = populationize(init_profile)
+    init_dist = init_gen.distribution()
+    for strat in init_profile:
+        dist[strat] = np.zeros(num_gens)
+        dist[strat][0] = init_dist[strat]
+    curr_gen = init_gen
+    for gen in range(num_gens):
+        curr_gen, curr_dist = update_gen_dist(curr_gen, num_rounds)
+        for strat in init_profile:
+            if strat not in curr_dist:
+                dist[strat][gen] = 0
+            else:
+                dist[strat][gen] = curr_dist[strat]
+    return dist
 
 
-def execute_and_print(initial_gen, num_gens, num_rounds):
+def plot(simulation_results: dict):
+    x_axis = simulation_results.pop('gens')
+    for strat in simulation_results:
+        plt.plot(x_axis, simulation_results[strat], label=strat)
+    plt.title('Changes to population distribution with respect to time')
+    plt.xlabel('Generation')
+    plt.ylabel('Population Distribution [%]')
+    plt.legend()
+    plt.show()
+
+
+def populationize(input_dict):
+    """ Example --
+    >>> sample_dict = {
+            'Kantian': 2,
+            'Defector': 1
+        }
+    >>> sample_population = populationize(sample_dict)
+
+    is the same as doing:
+
+    >>> sample_list = [Kantian(), Kantian(), Defector()]
+    >>> sample_population = Population(sample_list)
+    """
+    profile = []
+    for strategy in input_dict:
+        if strategy not in all_strategies:
+            raise Exception('Specified strategy does not exist.')
+        else:
+            for i in range(input_dict[strategy]):
+                profile.append(deepcopy(all_strategies[strategy]))
+    return Population(profile)
+
+
+def update_gen_dist(curr_gen, num_rounds):
+    round_robin(curr_gen, num_rounds)
+    new_gen = curr_gen.create_next_gen()
+    new_dist = new_gen.distribution()
+    return new_gen, new_dist
+
+
+def test_simulation_and_print(initial_gen, num_gens, num_rounds):
     current_gen = initial_gen
     for gen in range(num_gens):
         print("Generation " + str(gen + 1) + ":")
-
         round_robin(current_gen, num_rounds)
-        print("Distribution [%]:")
+        print("Population distribution [%]:")
         print(current_gen.distribution())
         print("Final Scores:")
         print([str(member.name) + ": " + str(member.score) for member in current_gen])
@@ -27,35 +83,6 @@ def execute_and_print(initial_gen, num_gens, num_rounds):
         current_gen.reset_all_scores()
 
 
-def execute_and_plot(initial_gen, num_gens, num_rounds):
-    all_strats = initial_gen.unique_strats()
-    num_of_strats = len(all_strats)
-    x = np.linspace(1, NUM_GENS, NUM_GENS)
-    ys = np.zeros((num_of_strats, NUM_GENS))
-
-    for i in range(num_of_strats):
-        ys[i][0] = initial_gen.distribution()[all_strats[i]]
-
-    current_gen = initial_gen
-    for gen in range(num_gens):
-        round_robin(current_gen, num_rounds)
-        current_gen = current_gen.create_next_gen()
-        current_gen.reset_all_scores()
-
-        dist = current_gen.distribution()
-        i = 0
-        for strat in all_strats:
-            if strat in dist.keys():
-                ys[i][gen] = dist[strat]
-            i += 1
-
-    for i in range(num_of_strats):
-        plt.plot(x, ys[i, :], label=all_strats[i])
-    plt.title('Changes to population distribution with respect to time')
-    plt.xlabel('Generation')
-    plt.ylabel('Population Distribution [%]')
-    plt.legend()
-    plt.show()
-
-
-execute_and_plot(INITIAL_PROFILE, NUM_GENS, NUM_ROUNDS)
+if __name__ == '__main__':
+    a = run_simulation(INITIAL_PROFILE, NUM_GENS, NUM_ROUNDS)
+    plot(a)

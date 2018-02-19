@@ -1,14 +1,7 @@
-# INITIAL GENERATION PROFILE
-from stratdata import *
-from gendata import *
+from data import *
 
 """ Contains function for creating initial populations and 
 various initial populations for analysis. """
-
-# ----- All strategies ----- #
-""" A dictionary that contains all strategies.
-Used by 'populationize()' function.
-"""
 
 all_strategies = {
     'Kantian': Kantian(),
@@ -27,12 +20,8 @@ all_strategies = {
 }
 
 
-# ----- Function ----- #
 def populationize(input_dict):
-    """ Takes as input a dictionary that specifies the initial population,
-    and returns a corresponding Population object.
-
-    Example --
+    """ Example --
     >>> sample_dict = {
             'Kantian': 2,
             'Defector': 1
@@ -54,7 +43,6 @@ def populationize(input_dict):
     return Population(profile)
 
 
-# ----- Initial profiles ----- #
 def diverse():
     n = 15
     profile = {
@@ -111,7 +99,7 @@ def tfts_with_tester():
 
 def tft_test1():
     profile = []
-    for i in range(5):
+    for i in range(1):
         profile.append(TitForTat())
         profile.append(TitFor2Tats())
         profile.append(Grudger())

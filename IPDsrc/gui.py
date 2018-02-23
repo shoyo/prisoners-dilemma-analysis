@@ -57,7 +57,6 @@ class SimulationGUI(Frame):
             'Selfish strategies': self.self_strats,
             'Neutral strategies': self.neut_strats
         }
-
         Label(self.setting_frame, text="Initial Profile",
               font=fonts['header'], height=2).grid(row=self.curr_row, column=0)
         self.curr_row += 1
@@ -157,9 +156,6 @@ class SimulationGUI(Frame):
     def init_decor(self):
         self.header.config(bg=bg['decor1'])
         self.footer.config(bg=bg['decor1'])
-
-        Label(self.footer, text="footer", font=fonts['header']).grid(row=0, column=0)
-
         top_canvas = Canvas(self.header, bg=bg['decor1'], height=25, width=1100)
         top_canvas.grid(row=0, column=0)
         bot_canvas = Canvas(self.footer, bg=bg['decor1'], height=25, width=1100)

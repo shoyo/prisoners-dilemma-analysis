@@ -8,6 +8,6 @@ Basically, strategies compete. Better strategies reproduce more succesfully. Rep
 Nitty gritty details can be read [here](./evolution-ipd.pdf).
 
 
-**GUI**
+**GUI:**
 
 ![alt text](https://github.com/shoyo-inokuchi/iterated-prisoners-dilemma/blob/master/examples/default.png)

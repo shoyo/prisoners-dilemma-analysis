@@ -136,15 +136,13 @@ class SimulationGUI(Frame):
             self.curr_row += 1
 
     def init_graph(self):
-        self.fig = Figure(figsize=(8, 5.7), dpi=100)
+        self.fig = Figure(figsize=(8, 5.25), dpi=100)
         self.canvas = FigureCanvasTkAgg(self.fig, self.graph_frame)
-        self.canvas.get_tk_widget().grid(row=0, column=0)
         self.plot_filler()
-        self.graph_label = Label(self.graph_frame, text="tweak settings to display graph!")
-        # self.graph_label.grid(row=0, column=0)
-        # self.toolbar = NavigationToolbar2TkAgg(self.canvas, self.graph_frame)
-        # self.toolbar.update()
-        # self.canvas._tkcanvas.grid(row=0, column=0)
+        self.canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=True)
+        toolbar = NavigationToolbar2TkAgg(self.canvas, self.graph_frame)
+        toolbar.update()
+        self.canvas._tkcanvas.pack()
 
     def init_menu(self):
         main_menu = Menu(self.parent)
@@ -161,9 +159,18 @@ class SimulationGUI(Frame):
         bot_canvas = Canvas(self.footer, bg=bg['decor1'], height=25, width=1100)
         bot_canvas.grid(row=0, column=0)
 
+    def set_graph_params(self):
+        self.f.set_title("Population distibution with respect to time")
+        self.f.set_xlabel("Generation")
+        self.f.set_ylabel("Population density [%]")
+        self.f.set_xbound(lower=0, upper=self.param['Generations'].get())
+        self.f.set_ybound(lower=-5, upper=110)
+
     def plot_filler(self):
         self.fig.clear()
-        self.fig.add_subplot(111).plot()
+        self.f = self.fig.add_subplot(111)
+        self.f.plot()
+        self.set_graph_params()
         self.canvas.show()
 
     def reset(self):
@@ -200,9 +207,11 @@ class SimulationGUI(Frame):
                                 self.param['Rounds'].get())
         self.fig.clear()
         x_axis = result.pop('gens')
-        a = self.fig.add_subplot(111)
+        self.f = self.fig.add_subplot(111)
         for strat in result:
-            a.plot(x_axis, result[strat], label=strat)
+            self.f.plot(x_axis, result[strat], label=strat)
+        self.set_graph_params()
+        self.f.legend()
         self.canvas.show()
 
     def quit_app(self):
@@ -215,7 +224,7 @@ class SimulationGUI(Frame):
 def run_gui():
     root = Tk()
     root.title("IPD Simulation")
-    root.geometry("1090x631")
+    root.geometry("1107x631")
     root.resizable(False, False)
     ipd = SimulationGUI(root)
     root.mainloop()

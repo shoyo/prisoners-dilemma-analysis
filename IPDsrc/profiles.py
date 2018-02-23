@@ -17,7 +17,6 @@ all_strategies = {
 }
 
 
-
 def diverse():
     n = 15
     profile = {
@@ -57,7 +56,7 @@ def kantian_with_few_defectors():
         'Kantian': 50,
         'Defector': 3
     }
-    return populationize(profile)
+    return profile
 
 
 def tfts_with_tester():

@@ -258,7 +258,6 @@ class Random(Player):
 # -------------------------------------------------- #
 
 class Population(object):
-
     def __init__(self, members: list):
         self.members = members
 

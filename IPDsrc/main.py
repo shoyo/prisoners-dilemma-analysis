@@ -68,21 +68,6 @@ def update_gen_dist(curr_gen, num_rounds):
     return new_gen, new_dist
 
 
-def test_simulation_and_print(initial_gen, num_gens, num_rounds):
-    current_gen = initial_gen
-    for gen in range(num_gens):
-        print("Generation " + str(gen + 1) + ":")
-        round_robin(current_gen, num_rounds)
-        print("Population distribution [%]:")
-        print(current_gen.distribution())
-        print("Final Scores:")
-        print([str(member.name) + ": " + str(member.score) for member in current_gen])
-        print()
-
-        current_gen = current_gen.create_next_gen()
-        current_gen.reset_all_scores()
-
-
 if __name__ == '__main__':
     a = run_simulation(INITIAL_PROFILE, NUM_GENS, NUM_ROUNDS)
     plot(a)

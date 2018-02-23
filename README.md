@@ -13,6 +13,8 @@ Basically, strategies compete. Better strategies reproduce more succesfully. Rep
 
 ![alt text](https://github.com/shoyo-inokuchi/iterated-prisoners-dilemma/blob/master/samples/tft_vs_defectors.png)
 
+![alt text](https://github.com/shoyo-inokuchi/iterated-prisoners-dilemma/blob/master/samples/tfts.png)
+
 ![alt text](https://github.com/shoyo-inokuchi/iterated-prisoners-dilemma/blob/master/samples/tfts_tester.png)
 
-*Simulations with identical settings may produce hugely varying results (especially with smaller population sizes or rounds) due to the probabilitic nature of the breeding mechanism. Nitty gritty details can be read [here](./evolution-ipd.pdf).*
+*Simulations with identical settings may produce hugely varying results (especially with smaller population sizes or rounds) due to the probabilistic nature of the breeding mechanism. Nitty gritty details can be read [here](./evolution-ipd.pdf).*

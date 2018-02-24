@@ -1,6 +1,4 @@
-from tkinter import *
-from tkinter import ttk
-from tkinter import messagebox
+from tkinter import Frame, IntVar, Button, Label, Menu, Canvas, Entry, TclError, BOTH, TOP, messagebox
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \

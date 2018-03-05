@@ -1,4 +1,4 @@
-from tkinter import Frame, IntVar, Button, Label, Menu, Canvas, Entry, TclError, BOTH, TOP, messagebox
+from tkinter import Tk, Frame, IntVar, Button, Label, Menu, Canvas, Entry, TclError, BOTH, TOP, E, S, messagebox
 import matplotlib
 matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, \
@@ -187,7 +187,7 @@ class SimulationGUI(Frame):
                     messagebox.showerror("Warning",
                                          "Inputted values are invalid. Please try again.")
                     return
-                if var != 0:
+                if var > 0:
                     profile[strategy] = var
         return profile
 

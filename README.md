@@ -1,7 +1,7 @@
  # iterated-prisoners-dilemma
 Created an analysis tool for the Iterated Prisoner's Dilemma.
 
-An initial "population" of various strategies plays the iterated prisoner's dilemma game, and successive generations are created according the fitness of each member.
+An initial "population" of various strategies plays the iterated prisoner's dilemma game, and successive generations are created according to the fitness of each member.
   
 Basically, strategies compete. Better strategies reproduce more succesfully. Repeat. Plot.<br /><br />
 

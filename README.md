@@ -31,6 +31,7 @@ To install NumPy, type into the command line:
     pip3 install numpy
 
 ### Running the Simulation Tool
+After obtainining a local copy of this repository, navigate to the `IPDsrc` directory.  
 To run the GUI and start using the application, type into the command line:
 
     python3 gui.py
